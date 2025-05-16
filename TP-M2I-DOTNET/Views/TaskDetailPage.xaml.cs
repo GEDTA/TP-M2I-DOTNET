@@ -1,4 +1,6 @@
 using System;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Maui.ApplicationModel;
 using TP_M2I_DOTNET.Services;
 using TP_M2I_DOTNET.ViewModels;
 
@@ -61,6 +63,9 @@ namespace TP_M2I_DOTNET.Views
                 ? _simulationViewModelFactory(_simulationService) 
                 : _apiViewModel;
             BindingContext = _currentViewModel;
+            
+            // S'abonner à l'événement TaskUpdated
+            _currentViewModel.TaskUpdated += OnTaskUpdated;
 
             if (_isNew)
             {
@@ -69,6 +74,32 @@ namespace TP_M2I_DOTNET.Views
             else
             {
                 await _currentViewModel.LoadTaskAsync(_taskId);
+            }
+        }
+        
+        private void OnTaskUpdated(Models.TodoTask updatedTask)
+        {
+            // Rafraîchir la liste des tâches après une mise à jour
+            // Cette méthode sera appelée juste avant de revenir à la page précédente
+            if (_isSimulation)
+            {
+                // Rafraîchir la liste de simulation
+                var simulationViewModel = Application.Current.MainPage.Handler.MauiContext.Services
+                    .GetService<SimulationTasksViewModel>();
+                if (simulationViewModel != null)
+                {
+                    MainThread.BeginInvokeOnMainThread(async () => await simulationViewModel.LoadTasksAsync());
+                }
+            }
+            else
+            {
+                // Rafraîchir la liste API
+                var tasksViewModel = Application.Current.MainPage.Handler.MauiContext.Services
+                    .GetService<TasksViewModel>();
+                if (tasksViewModel != null)
+                {
+                    MainThread.BeginInvokeOnMainThread(async () => await tasksViewModel.LoadTasksAsync());
+                }
             }
         }
     }

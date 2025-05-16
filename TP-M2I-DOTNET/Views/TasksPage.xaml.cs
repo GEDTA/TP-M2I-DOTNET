@@ -1,6 +1,8 @@
 using System;
 using Microsoft.Maui.Controls;
 using TP_M2I_DOTNET.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Maui.ApplicationModel;
 using TP_M2I_DOTNET.ViewModels;
 
 namespace TP_M2I_DOTNET.Views
@@ -46,9 +48,22 @@ namespace TP_M2I_DOTNET.Views
                 // Désélectionner l'élément pour permettre une nouvelle sélection
                 ((CollectionView)sender).SelectedItem = null;
                 
+                // S'abonner à l'événement TaskUpdated avant la navigation
+                TaskDetailViewModel viewModel = Handler.MauiContext.Services.GetService<TaskDetailViewModel>();
+                if (viewModel != null)
+                {
+                    viewModel.TaskUpdated += OnTaskUpdated;
+                }
+                
                 // Naviguer vers la page de détail
                 await Shell.Current.GoToAsync($"taskdetail?id={selectedTask.Id}&new=false&simulation=false");
             }
+        }
+        
+        private void OnTaskUpdated(Models.TodoTask updatedTask)
+        {
+            // Rafraîchir la liste des tâches après une mise à jour
+            MainThread.BeginInvokeOnMainThread(async () => await _viewModel.LoadTasksAsync());
         }
     }
 }

@@ -6,12 +6,18 @@ using TP_M2I_DOTNET.Services;
 
 namespace TP_M2I_DOTNET.ViewModels
 {
+    // Délégué pour l'événement de mise à jour d'une tâche
+    public delegate void TaskUpdatedEventHandler(TodoTask updatedTask);
+    
     public class TaskDetailViewModel : INotifyPropertyChanged
     {
         private readonly ITaskService _taskService;
         private TodoTask _task;
         private bool _isLoading;
         private bool _isNew;
+        
+        // Événement déclenché lorsqu'une tâche est mise à jour ou créée
+        public event TaskUpdatedEventHandler TaskUpdated;
 
         public TaskDetailViewModel(ITaskService taskService)
         {
@@ -110,6 +116,9 @@ namespace TP_M2I_DOTNET.ViewModels
                 {
                     Task = await _taskService.UpdateTaskAsync(Task);
                 }
+                
+                // Déclencher l'événement de mise à jour
+                TaskUpdated?.Invoke(Task);
                 
                 await Shell.Current.DisplayAlert("Succès", "Tâche enregistrée avec succès", "OK");
                 await Shell.Current.GoToAsync("..");
