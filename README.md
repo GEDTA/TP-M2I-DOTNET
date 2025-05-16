@@ -4,7 +4,7 @@ Une application MAUI moderne pour la gestion de tâches, avec prise en charge de
 
 
 ## Explications
-L'architecture utilisé n'est pas exactement du MVVM, mais une approche hybride.
+L'architecture utilisé n'est pas exactement du MVVM, mais une approche hybride ( les viewmodels sont des "controllers" aucune vue n'y est).
 
 Cette approche permet de gérer les données de manière cohérente plus facilement entre les modes API et Simulation.
 
