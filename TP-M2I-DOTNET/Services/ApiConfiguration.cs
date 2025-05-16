@@ -14,8 +14,8 @@ namespace TP_M2I_DOTNET.Services
                 // Chemin vers le fichier .env
 
 
-                // J'ai pas reussi a installer correctement le package DotNetEnv
-                // Donc j'ai opté pour une approche simple avec un fichier .env
+                // J'ai pas reussi a installer correctement le package DotNetEnv 
+                // Par manque de temps j'ai opté pour une approche simple avec un fichier .env
                 string envFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env");
                 
                 if (File.Exists(envFilePath))

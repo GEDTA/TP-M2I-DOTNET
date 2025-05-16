@@ -2,6 +2,12 @@
 
 Une application MAUI moderne pour la gestion de tâches, avec prise en charge des modes API et simulation.
 
+
+## Explications
+L'architecture utilisé n'est pas exactement du MVVM, mais une approche hybride.
+
+Cette approche permet de gérer les données de manière cohérente plus facilement entre les modes API et Simulation.
+
 ## Fonctionnalités
 
 - **Gestion complète des tâches**
