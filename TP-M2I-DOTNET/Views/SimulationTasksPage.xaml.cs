@@ -38,5 +38,17 @@ namespace TP_M2I_DOTNET.Views
                 _viewModel.FilterCommand.Execute(selectedStatus);
             }
         }
+        
+        private async void OnTaskSelected(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.CurrentSelection.FirstOrDefault() is Models.TodoTask selectedTask)
+            {
+                // Désélectionner l'élément pour permettre une nouvelle sélection
+                ((CollectionView)sender).SelectedItem = null;
+                
+                // Naviguer vers la page de détail avec le paramètre simulation=true
+                await Shell.Current.GoToAsync($"taskdetail?id={selectedTask.Id}&new=false&simulation=true");
+            }
+        }
     }
 }

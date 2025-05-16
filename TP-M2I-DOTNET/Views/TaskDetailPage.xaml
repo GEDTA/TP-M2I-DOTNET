@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:TP_M2I_DOTNET.ViewModels"
+             xmlns:models="clr-namespace:TP_M2I_DOTNET.Models"
+             xmlns:converters="clr-namespace:TP_M2I_DOTNET.Converters"
+             x:Class="TP_M2I_DOTNET.Views.TaskDetailPage"
+             Title="{Binding IsNew, Converter={StaticResource BoolToStringConverter}, ConverterParameter='Nouvelle tâche|Détails de la tâche'}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="FieldLabelStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="TextColor" Value="#666666" />
+                <Setter Property="Margin" Value="0,10,0,5" />
+            </Style>
+            
+            <Style x:Key="FieldValueStyle" TargetType="Entry">
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="TextColor" Value="#000000" />
+            </Style>
+            
+            <Style x:Key="StatusButtonStyle" TargetType="Button">
+                <Setter Property="Margin" Value="5" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="HeightRequest" Value="40" />
+            </Style>
+            
+            <Style x:Key="ActionButtonStyle" TargetType="Button">
+                <Setter Property="Margin" Value="10" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="HeightRequest" Value="50" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="10">
+            <!-- Titre -->
+            <Label Text="Titre" Style="{StaticResource FieldLabelStyle}" />
+            <Entry Text="{Binding Task.Title}" 
+                   Style="{StaticResource FieldValueStyle}" 
+                   Placeholder="Titre de la tâche" />
+
+            <!-- Description -->
+            <Label Text="Description" Style="{StaticResource FieldLabelStyle}" />
+            <Editor Text="{Binding Task.Description}" 
+                    HeightRequest="100" 
+                    Placeholder="Description de la tâche" />
+
+            <!-- Priorité -->
+            <Label Text="Priorité" Style="{StaticResource FieldLabelStyle}" />
+            <Picker SelectedItem="{Binding Task.Priority}">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type models:TaskPriority}">
+                        <models:TaskPriority>Low</models:TaskPriority>
+                        <models:TaskPriority>Medium</models:TaskPriority>
+                        <models:TaskPriority>High</models:TaskPriority>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
+
+            <!-- Date d'échéance -->
+            <Label Text="Date d'échéance" Style="{StaticResource FieldLabelStyle}" />
+            <DatePicker Date="{Binding Task.DueDate}" />
+
+            <!-- Statut -->
+            <Label Text="Statut" Style="{StaticResource FieldLabelStyle}" />
+            <Label Text="{Binding Task.Status, Converter={StaticResource TaskStatusConverter}}" 
+                   FontSize="16" 
+                   FontAttributes="Bold" />
+
+            <!-- Boutons de changement de statut -->
+            <Label Text="Changer le statut" Style="{StaticResource FieldLabelStyle}" />
+            <FlexLayout JustifyContent="SpaceAround">
+                <Button Text="À faire" 
+                        Command="{Binding ChangeStatusCommand}" 
+                        CommandParameter="{x:Static models:TaskStatus.Todo}"
+                        Style="{StaticResource StatusButtonStyle}"
+                        BackgroundColor="#CCCCCC"
+                        TextColor="Black" />
+                
+                <Button Text="En cours" 
+                        Command="{Binding ChangeStatusCommand}" 
+                        CommandParameter="{x:Static models:TaskStatus.InProgress}"
+                        Style="{StaticResource StatusButtonStyle}"
+                        BackgroundColor="#007AFF"
+                        TextColor="White" />
+                
+                <Button Text="Terminé" 
+                        Command="{Binding ChangeStatusCommand}" 
+                        CommandParameter="{x:Static models:TaskStatus.Done}"
+                        Style="{StaticResource StatusButtonStyle}"
+                        BackgroundColor="#34C759"
+                        TextColor="White" />
+            </FlexLayout>
+
+            <!-- Dates de création et mise à jour -->
+            <BoxView HeightRequest="1" BackgroundColor="#DDDDDD" Margin="0,20" />
+            
+            <Label Text="{Binding Task.CreatedAt, StringFormat='Créé le: {0:dd/MM/yyyy HH:mm}'}" 
+                   FontSize="12" 
+                   TextColor="#999999" />
+            
+            <Label Text="{Binding Task.UpdatedAt, StringFormat='Mis à jour le: {0:dd/MM/yyyy HH:mm}'}" 
+                   FontSize="12" 
+                   TextColor="#999999" />
+
+            <!-- Boutons d'action -->
+            <BoxView HeightRequest="1" BackgroundColor="#DDDDDD" Margin="0,10" />
+            
+            <Button Text="Enregistrer" 
+                    Command="{Binding SaveCommand}" 
+                    Style="{StaticResource ActionButtonStyle}"
+                    BackgroundColor="#34C759"
+                    TextColor="White" />
+            
+            <Button Text="Supprimer" 
+                    Command="{Binding DeleteCommand}" 
+                    Style="{StaticResource ActionButtonStyle}"
+                    BackgroundColor="#FF3B30"
+                    TextColor="White"
+                    IsVisible="{Binding IsNew, Converter={StaticResource InverseBoolConverter}}" />
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Controls;
 using TP_M2I_DOTNET.Models;
 using TP_M2I_DOTNET.Services;
@@ -31,6 +32,11 @@ namespace TP_M2I_DOTNET.ViewModels
             RefreshCommand = new Command(async () => await RefreshAsync());
             NavigateToSimulationCommand = new Command(async () => await NavigateToSimulation());
             NavigateToApiCommand = new Command(async () => await NavigateToApi());
+            ViewTaskDetailsCommand = new Command<TodoTask>(async (task) => await ViewTaskDetailsAsync(task));
+            AddNewTaskCommand = new Command(async () => await AddNewTaskAsync());
+            
+            // Charger les tâches initiales
+            MainThread.BeginInvokeOnMainThread(async () => await LoadTasksAsync());
         }
 
         public string Title
@@ -104,6 +110,8 @@ namespace TP_M2I_DOTNET.ViewModels
         public ICommand RefreshCommand { get; }
         public ICommand NavigateToSimulationCommand { get; }
         public ICommand NavigateToApiCommand { get; }
+        public ICommand ViewTaskDetailsCommand { get; }
+        public ICommand AddNewTaskCommand { get; }
 
         public async Task LoadTasksAsync()
         {
@@ -153,6 +161,19 @@ namespace TP_M2I_DOTNET.ViewModels
         private async Task NavigateToApi()
         {
             await Shell.Current.GoToAsync("//tasks");
+        }
+
+        private async Task ViewTaskDetailsAsync(TodoTask task)
+        {
+            if (task == null)
+                return;
+
+            await Shell.Current.GoToAsync($"taskdetail?id={task.Id}&new=false&simulation=false");
+        }
+
+        private async Task AddNewTaskAsync()
+        {
+            await Shell.Current.GoToAsync("taskdetail?new=true&simulation=false");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

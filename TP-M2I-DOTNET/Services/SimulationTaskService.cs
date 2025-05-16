@@ -64,11 +64,24 @@ namespace TP_M2I_DOTNET.Services
 
         public async Task<TodoTask> AddTaskAsync(TodoTask task)
         {
-            task.Id = _tasks.Max(t => t.Id) + 1;
-            task.CreatedAt = DateTime.Now;
-            task.UpdatedAt = DateTime.Now;
-            _tasks.Add(task);
-            return await Task.FromResult(task);
+            // Générer un nouvel ID (le plus grand ID + 1)
+            int newId = _tasks.Count > 0 ? _tasks.Max(t => t.Id) + 1 : 1;
+            
+            // Créer une nouvelle instance pour éviter les problèmes de référence
+            var newTask = new TodoTask
+            {
+                Id = newId,
+                Title = task.Title,
+                Description = task.Description,
+                Status = task.Status,
+                Priority = task.Priority,
+                DueDate = task.DueDate,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
+            };
+            
+            _tasks.Add(newTask);
+            return await Task.FromResult(newTask);
         }
 
         public async Task<bool> DeleteTaskAsync(int id)

@@ -27,7 +27,7 @@ public static class MauiProgram
 		// Configuration du HttpClient
 		builder.Services.AddHttpClient("TasksApi", client =>
 		{
-			client.BaseAddress = new Uri("https://api.tasks-collaboration.example/v1/");
+			// L'URL de base sera configurée dans le service ApiTaskService
 			client.DefaultRequestHeaders.Accept.Add(
 				new MediaTypeWithQualityHeaderValue("application/json"));
 		});
@@ -42,9 +42,18 @@ public static class MauiProgram
 		builder.Services.AddTransient<SimulationTasksViewModel>(sp =>
 			new SimulationTasksViewModel(sp.GetRequiredService<SimulationTaskService>()));
 		
+		// Enregistrer les ViewModels pour les détails de tâche
+		builder.Services.AddTransient<TaskDetailViewModel>(sp =>
+			new TaskDetailViewModel(sp.GetRequiredService<ApiTaskService>()));
+		
+		// Créer une factory pour le ViewModel de simulation
+		builder.Services.AddTransient<Func<SimulationTaskService, TaskDetailViewModel>>(sp =>
+			simulationService => new TaskDetailViewModel(simulationService));
+		
 		// Enregistrer les pages
 		builder.Services.AddTransient<TasksPage>();
 		builder.Services.AddTransient<SimulationTasksPage>();
+		builder.Services.AddTransient<TaskDetailPage>();
 
 #if DEBUG
 		builder.Logging.AddDebug();

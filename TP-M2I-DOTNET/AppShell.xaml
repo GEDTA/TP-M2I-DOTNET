@@ -6,6 +6,19 @@
     xmlns:views="clr-namespace:TP_M2I_DOTNET.Views"
     Shell.FlyoutBehavior="Flyout"
     Title="TP_M2I_DOTNET">
+    
+    <Shell.Resources>
+        <ResourceDictionary>
+            <Style x:Key="BaseStyle" TargetType="Element">
+                <Setter Property="Shell.BackgroundColor" Value="#455A64" />
+                <Setter Property="Shell.ForegroundColor" Value="White" />
+                <Setter Property="Shell.TitleColor" Value="White" />
+                <Setter Property="Shell.TabBarBackgroundColor" Value="#455A64" />
+                <Setter Property="Shell.TabBarForegroundColor" Value="White" />
+                <Setter Property="Shell.TabBarUnselectedColor" Value="#95FFFFFF" />
+            </Style>
+        </ResourceDictionary>
+    </Shell.Resources>
 
     <ShellContent
         Title="Tasks"

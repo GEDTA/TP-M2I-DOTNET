@@ -25,6 +25,8 @@ namespace TP_M2I_DOTNET.ViewModels
             RefreshCommand = new Command(async () => await RefreshAsync());
             NavigateToApiCommand = new Command(async () => await NavigateToApi());
             FilterCommand = new Command<Models.TaskStatus?>(async (status) => await FilterTasksAsync(status));
+            ViewTaskDetailsCommand = new Command<TodoTask>(async (task) => await ViewTaskDetailsAsync(task));
+            AddNewTaskCommand = new Command(async () => await AddNewTaskAsync());
             
             // Charger les tâches initiales
             MainThread.BeginInvokeOnMainThread(async () => await LoadTasksAsync());
@@ -60,6 +62,8 @@ namespace TP_M2I_DOTNET.ViewModels
         public ICommand FilterCommand { get; }
         public ICommand RefreshCommand { get; }
         public ICommand NavigateToApiCommand { get; }
+        public ICommand ViewTaskDetailsCommand { get; }
+        public ICommand AddNewTaskCommand { get; }
 
         public async Task LoadTasksAsync()
         {
@@ -125,6 +129,19 @@ namespace TP_M2I_DOTNET.ViewModels
         private async Task NavigateToApi()
         {
             await Shell.Current.GoToAsync("//tasks");
+        }
+
+        private async Task ViewTaskDetailsAsync(TodoTask task)
+        {
+            if (task == null)
+                return;
+
+            await Shell.Current.GoToAsync($"taskdetail?id={task.Id}&new=false&simulation=true");
+        }
+
+        private async Task AddNewTaskAsync()
+        {
+            await Shell.Current.GoToAsync("taskdetail?new=true&simulation=true");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
