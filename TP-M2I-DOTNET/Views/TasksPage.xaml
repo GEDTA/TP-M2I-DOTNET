@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:TP_M2I_DOTNET.ViewModels"
+             xmlns:models="clr-namespace:TP_M2I_DOTNET.Models"
+             xmlns:converters="clr-namespace:TP_M2I_DOTNET.Converters"
+             xmlns:sys="clr-namespace:System;assembly=netstandard"
+             x:Class="TP_M2I_DOTNET.Views.TasksPage"
+             Title="{Binding Title}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="TaskCardStyle" TargetType="Frame">
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Margin" Value="10,5" />
+                <Setter Property="Padding" Value="15" />
+                <Setter Property="BorderColor" Value="#DDDDDD" />
+                <Setter Property="HasShadow" Value="True" />
+            </Style>
+            
+            <Style x:Key="TaskTitleStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="LineBreakMode" Value="TailTruncation" />
+            </Style>
+            
+            <Style x:Key="TaskPriorityStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Margin" Value="0,5,0,0" />
+            </Style>
+            
+            <Style x:Key="TaskStatusStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Margin" Value="0,5,0,0" />
+                <Setter Property="HorizontalOptions" Value="End" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,*">
+        <!-- Bouton pour accéder à la simulation -->
+        <Button Grid.Row="0"
+                Text="Accéder à la simulation"
+                Command="{Binding NavigateToSimulationCommand}"
+                Margin="10"
+                BackgroundColor="#007AFF"
+                TextColor="White"
+                CornerRadius="8"/>
+        <!-- Filtres -->
+        <StackLayout Grid.Row="1" Orientation="Horizontal" Padding="10" >
+            <Label Text="Filtrer par statut:" VerticalOptions="Center" Margin="0,0,10,0" />
+            <Picker x:Name="StatusFilter" 
+                   SelectedIndexChanged="OnStatusFilterChanged" 
+                   WidthRequest="150"
+                   BackgroundColor="#E0E0E0"
+                   TextColor="Black">
+                <Picker.Items>
+                    <x:String>Tous</x:String>
+                    <x:String>À faire</x:String>
+                    <x:String>En cours</x:String>
+                    <x:String>Terminé</x:String>
+                </Picker.Items>
+            </Picker>
+        </StackLayout>
+
+        <!-- Liste des tâches -->
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            
+            <RefreshView Grid.Row="0" IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}">
+                <CollectionView ItemsSource="{Binding Tasks}" 
+                              EmptyView="Aucune tâche trouvée"
+                              SelectionMode="Single"
+                              SelectionChanged="OnTaskSelected">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Style="{StaticResource TaskCardStyle}">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackLayout Grid.Column="0">
+                                    <Label Text="{Binding Title}" Style="{StaticResource TaskTitleStyle}" />
+                                    <Label Text="{Binding Priority, StringFormat='Priorité: {0}'}" Style="{StaticResource TaskPriorityStyle}">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding Priority}" Value="High">
+                                                <Setter Property="TextColor" Value="Red" />
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="Label" Binding="{Binding Priority}" Value="Medium">
+                                                <Setter Property="TextColor" Value="Orange" />
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="Label" Binding="{Binding Priority}" Value="Low">
+                                                <Setter Property="TextColor" Value="Green" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </StackLayout>
+                                <Label Grid.Column="1" Text="{Binding Status}" Style="{StaticResource TaskStatusStyle}">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="Todo">
+                                            <Setter Property="Text" Value="À faire" />
+                                            <Setter Property="TextColor" Value="Gray" />
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="InProgress">
+                                            <Setter Property="Text" Value="En cours" />
+                                            <Setter Property="TextColor" Value="Blue" />
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="Done">
+                                            <Setter Property="Text" Value="Terminé" />
+                                            <Setter Property="TextColor" Value="Green" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
+            
+            <!-- Bouton d'ajout de tâche -->
+            <Button Grid.Row="1"
+                    Text="Ajouter une tâche"
+                    Command="{Binding AddNewTaskCommand}"
+                    Margin="20"
+                    BackgroundColor="#34C759"
+                    TextColor="White"
+                    CornerRadius="8"
+                    HorizontalOptions="Fill" />
+        </Grid>
+    </Grid>
+</ContentPage>
